@@ -164,7 +164,7 @@ class Game:
         self.send_state()
 
     def check_for_win(self):
-        for p in self.__players:
+        for p in self.__players.values():
             if p.get_score() >= self.__WIN_NUM:
                 return p.get_name()
         return False
