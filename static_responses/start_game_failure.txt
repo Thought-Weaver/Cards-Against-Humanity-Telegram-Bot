@@ -1,0 +1,1 @@
+All players must have messaged the bot in order to start the game! Use the /startgame command to begin the game once this is true.

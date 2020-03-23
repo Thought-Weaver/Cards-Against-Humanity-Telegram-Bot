@@ -1,0 +1,1 @@
+Cannot start a game that isn't pending!

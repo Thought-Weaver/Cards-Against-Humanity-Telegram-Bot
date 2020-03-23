@@ -1,0 +1,5 @@
+The following decks are available to play with:
+
+(0) Base Deck
+
+If no deck is specified, the only base deck will be used.

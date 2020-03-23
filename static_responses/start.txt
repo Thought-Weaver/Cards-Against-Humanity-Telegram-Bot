@@ -1,0 +1,9 @@
+Welcome to Cards Against Humanity!
+
+In order to use me, you'll need to add me to a chat and have everyone who wishes to play directly message me (t.me/LA_CAH_Bot).
+
+Commands:
+
+/newgame - Begins a new game of Cards Against Humanity.
+/rules - Sends a message with the rules of Cards Against Humanity.
+/help - Sends a message with additional commands and information.

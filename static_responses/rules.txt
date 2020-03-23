@@ -1,0 +1,11 @@
+To start the game, each player will draw 10 white cards.
+
+The person who first joined the game begins as the Card Czar and will play a black card.
+
+Each player then submits white cards using /play {card_id} to fill in the blank(s) on the black card.
+
+Once all players have submitted their white cards, the Card Czar will choose the best white card submitted. That player will get one Awesome Point.
+
+At the end of the round, the next person in the list will become the Card Czar.
+
+The first person to 7 Awesome Points wins!

@@ -1,0 +1,1 @@
+There must be at least three players to start the game!

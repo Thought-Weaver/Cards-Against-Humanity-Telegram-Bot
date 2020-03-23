@@ -1,0 +1,1 @@
+You cannot remove a deck! There is no game pending.

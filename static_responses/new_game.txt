@@ -1,0 +1,9 @@
+A  new game of Cards Against Humanity has been created for this chat and is currently pending.
+
+/join [nickname] will let you join the game under a nickname or your username as a default.
+/leave command will remove you from the game.
+/listplayers will list all players in the current game.
+/endgame will end the current game.
+/startgame will start the current game.
+t
+If you join the game, you must have messaged @LA_CAH_Bot in order to see your hand!
