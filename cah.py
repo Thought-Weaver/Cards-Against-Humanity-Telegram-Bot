@@ -147,8 +147,13 @@ class Game:
             player.add_card(self.__deck.draw_white_card())
 
     def send_state(self):
-        text = "<b>Current Turn:</b> %s\n\n" % self.get_current_turn_player().get_name()
-        text += "<b>Current Black Card:</b>\n\n%s" % self.__current_black_card[1]
+        current_black_card_text = "<b>Current Black Card:</b>\n\n%s" % self.__current_black_card[1]
+        for telegram_id in self.__players.keys():
+            self.send_message(chat_id=telegram_id, text=current_black_card_text)
+
+        text = "<b>Current Turn:</b> <a href='tg://user?id=%s'>%s</a>\n\n" % (list(self.__players.keys())[self.__turn],
+                                                                              self.get_current_turn_player().get_name())
+        text += current_black_card_text
         self.send_message(chat_id=self.__chat_id, text=text)
 
     def next_turn(self):
@@ -185,6 +190,13 @@ class Game:
             count += 1
         self.send_message(self.__chat_id, text)
 
+    def player_submitted_correct_num_cards(self, telegram_id):
+        return len(self.__cards_submitted_this_round[telegram_id]) == self.__current_black_card[0]
+
+    def check_if_ready_for_choice(self):
+        return len(self.__cards_submitted_this_round.keys()) == len(self.__players) - 1 and \
+                all(len(cards) == self.__current_black_card[0] for cards in self.__cards_submitted_this_round.values())
+
     def play(self, telegram_id, card_id):
         player = self.__players[telegram_id]
 
@@ -208,8 +220,7 @@ class Game:
         self.draw(player)
 
         # Check to see that the correct number of cards have been submitted and everyone has submitted for this round.
-        if len(self.__cards_submitted_this_round.keys()) == len(self.__players) - 1 and \
-                all(len(cards) == self.__current_black_card[0] for cards in self.__cards_submitted_this_round.values()):
+        if self.check_if_ready_for_choice():
             self.__randomized_ids = [*range(len(self.__players) - 1)]
             random.shuffle(self.__randomized_ids)
             self.send_white_card_options()

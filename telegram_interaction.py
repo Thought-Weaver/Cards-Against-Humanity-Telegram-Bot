@@ -233,7 +233,7 @@ def play_handler(bot, update, chat_data, args):
     if not check_game_existence(bot, game, chat_id):
         return
 
-    if len(args) > 1:
+    if len(args) != 1:
         bot.send_message(chat_id=chat_id, text="Usage: /play {card ID}")
         return
 
@@ -254,7 +254,7 @@ def choose_handler(bot, update, chat_data, args):
     if not check_game_existence(bot, game, chat_id):
         return
 
-    if len(args) > 1:
+    if len(args) != 1:
         bot.send_message(chat_id=chat_id, text="Usage: /choose {ID}")
         return
 
@@ -280,11 +280,19 @@ def blame_handler(bot, update, chat_data):
         bot.send_message(chat_id=chat_id, text=text)
         return
 
+    if game.check_if_ready_for_choice():
+        for telegram_id, player in game.get_players().items():
+            if game.get_current_turn_player() == player:
+                bot.send_message(chat_id=chat_id, text="[{}](tg://user?id={})".format(player.get_name(), telegram_id),
+                                 parse_mode=telegram.ParseMode.MARKDOWN)
+                return
+
     for telegram_id, player in game.get_players().items():
-        if game.get_current_turn_player() == player:
+        if game.get_current_turn_player() != player and not game.player_submitted_correct_num_cards(telegram_id):
             bot.send_message(chat_id=chat_id, text="[{}](tg://user?id={})".format(player.get_name(), telegram_id),
                              parse_mode=telegram.ParseMode.MARKDOWN)
             return
+
 
 
 def add_deck_handler(bot, update, chat_data, args):
@@ -295,7 +303,7 @@ def add_deck_handler(bot, update, chat_data, args):
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if len(args) > 1:
+    if len(args) != 1:
         bot.send_message(chat_id=chat_id, text="Usage: /ad {deck ID from /decks}")
         return
 
@@ -328,7 +336,7 @@ def remove_deck_handler(bot, update, chat_data, args):
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if len(args) > 1:
+    if len(args) != 1:
         bot.send_message(chat_id=chat_id, text="Usage: /rd {deck ID from /decks}")
         return
 
