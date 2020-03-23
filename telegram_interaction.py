@@ -51,7 +51,7 @@ def send_hand(bot, chat_id, game, user_id):
     hand = game.get_players().get(user_id).get_formatted_hand()
 
     bot.send_message(chat_id=user_id,
-                     text="Your current hand:\n\n" + hand + "\n")
+                     text=hand + "\n")
 
 
 def send_hands(bot, chat_id, game, players):
@@ -380,7 +380,7 @@ if __name__ == "__main__":
     leave_aliases = ["leave", "unjoin"]
     listplayers_aliases = ["listplayers", "list"]
     play_aliases = ["play", "p"]
-    choose_aliases = ["choose", "c"]
+    choose_aliases = ["choose", "c", "pick"]
     feedback_aliases = ["feedback"]
     newgame_aliases = ["newgame"]
     startgame_aliases = ["startgame"]

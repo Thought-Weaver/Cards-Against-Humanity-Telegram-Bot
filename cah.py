@@ -174,7 +174,7 @@ class Game:
         return False
 
     def send_white_card_options(self):
-        text = "<b>Current Black Card:</b>\n\n%s\n\n" % self.__current_black_card[1]
+        text = "<b>Current Black Card:</b>\n\n%s\n" % self.__current_black_card[1]
         text += "<b>White Cards Submitted:</b>\n\n"
 
         count = 0
@@ -211,6 +211,7 @@ class Game:
         if len(self.__cards_submitted_this_round.keys()) == len(self.__players) - 1 and \
                 all(len(cards) == self.__current_black_card[0] for cards in self.__cards_submitted_this_round.values()):
             self.__randomized_ids = range(len(self.__players) - 1)
+            random.shuffle(self.__randomized_ids)
             self.send_white_card_options()
 
     def send_scoreboard(self):
