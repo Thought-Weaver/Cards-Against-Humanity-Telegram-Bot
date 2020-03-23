@@ -210,7 +210,7 @@ class Game:
         # Check to see that the correct number of cards have been submitted and everyone has submitted for this round.
         if len(self.__cards_submitted_this_round.keys()) == len(self.__players) - 1 and \
                 all(len(cards) == self.__current_black_card[0] for cards in self.__cards_submitted_this_round.values()):
-            self.__randomized_ids = range(len(self.__players) - 1)
+            self.__randomized_ids = [*range(len(self.__players) - 1)]
             random.shuffle(self.__randomized_ids)
             self.send_white_card_options()
 
