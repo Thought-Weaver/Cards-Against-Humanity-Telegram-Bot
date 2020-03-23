@@ -125,7 +125,7 @@ class Game:
             self.__players[user_id] = Player(name, self.__deck.draw_hand())
             self.send_message(self.__chat_id, "%s has been added to the game.\n" % name)
 
-        self.send_message(self.__chat_id, self.get_state())
+        self.send_state()
 
     def send_message(self, chat_id, text):
         try:
@@ -146,9 +146,10 @@ class Game:
         while len(player.get_hand()) < self.__deck.get_hand_size():
             player.add_card(self.__deck.draw_white_card())
 
-    def get_state(self):
+    def send_state(self):
         text = "Current Turn: %s\n\n" % self.get_current_turn_player().get_name()
         text += "Current Black Card:\n\n%s" % self.__current_black_card[1]
+        self.send_message(chat_id=self.__chat_id, text=text)
 
     def next_turn(self):
         for telegram_id, white_cards in self.__cards_submitted_this_round:
@@ -160,7 +161,7 @@ class Game:
 
         self.__turn = (self.__turn + 1) % len(self.__players)
 
-        self.send_message(chat_id=self.__chat_id, text=self.get_state())
+        self.send_state()
 
     def check_for_win(self):
         for p in self.__players:
