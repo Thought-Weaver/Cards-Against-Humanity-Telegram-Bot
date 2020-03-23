@@ -147,8 +147,8 @@ class Game:
             player.add_card(self.__deck.draw_white_card())
 
     def send_state(self):
-        text = "Current Turn: %s\n\n" % self.get_current_turn_player().get_name()
-        text += "Current Black Card:\n\n%s" % self.__current_black_card[1]
+        text = "<b>Current Turn:</b> %s\n\n" % self.get_current_turn_player().get_name()
+        text += "<b>Current Black Card:</b>\n\n%s" % self.__current_black_card[1]
         self.send_message(chat_id=self.__chat_id, text=text)
 
     def next_turn(self):
@@ -170,14 +170,14 @@ class Game:
         return False
 
     def send_white_card_options(self):
-        text = "Current Black Card:\n\n%s" % self.__current_black_card[1]
-        text += "White Cards Submitted:\n\n"
+        text = "<b>Current Black Card:</b>\n\n%s\n\n" % self.__current_black_card[1]
+        text += "<b>White Cards Submitted:</b>\n\n"
 
         count = 0
         for id in self.__randomized_ids:
             key = list(self.__cards_submitted_this_round.keys())[id]
-            white_card = self.__cards_submitted_this_round[key]
-            text += "(%s) %s\n" % (count, white_card)
+            white_cards = self.__cards_submitted_this_round[key]
+            text += "(%s) %s\n" % (count, ", ".join(white_cards))
             count += 1
         self.send_message(self.__chat_id, text)
 
@@ -210,8 +210,8 @@ class Game:
             self.send_white_card_options()
 
     def send_scoreboard(self):
-        text = "Scoreboard:\n\n"
-        for p in self.__players:
+        text = "<b>Scoreboard:</b>\n\n"
+        for p in self.__players.values():
             text += "%s: %s\n" % (p.get_name(), p.get_score())
         self.send_message(self.__chat_id, text)
 
@@ -238,7 +238,7 @@ class Game:
         player_chosen = self.__players[key]
         player_chosen.increment_score()
 
-        self.send_message(self.__chat_id, "That card belonged to %s!")
+        self.send_message(self.__chat_id, "That card belonged to %s!" % player_chosen.get_name())
         self.send_scoreboard()
 
         return True

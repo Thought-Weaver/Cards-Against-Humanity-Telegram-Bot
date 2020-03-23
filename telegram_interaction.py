@@ -186,15 +186,15 @@ def startgame_handler(bot, update, chat_data):
         bot.send_message(chat_id=chat_id, text=text)
         return
 
+    text = open("static_responses/start_game.txt", "r").read()
+    bot.send_message(chat_id=chat_id, text=text)
+
     chat_id = update.message.chat_id
     pending_players = chat_data.get("pending_players", {})
     chat_data["is_game_pending"] = False
     decks = [0] if len(chat_data["decks"]) == 0 else chat_data["decks"]
     chat_data["game_obj"] = cah.Game(chat_id, pending_players, decks)
     game = chat_data["game_obj"]
-
-    text = open("static_responses/start_game.txt", "r").read()
-    bot.send_message(chat_id=chat_id, text=text)
 
     send_hands(bot, chat_id, game, pending_players)
 
