@@ -168,7 +168,7 @@ def startgame_handler(bot, update, chat_data):
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if user_id not in chat_data.get("pending_players", {}):
+    if user_id not in chat_data.get("pending_players", {}).keys():
         text = open("static_responses/start_game_id_missing_failure.txt", "r").read()
         bot.send_message(chat_id=chat_id, text=text)
         return

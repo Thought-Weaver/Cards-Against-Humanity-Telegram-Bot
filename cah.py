@@ -152,7 +152,7 @@ class Game:
         self.send_message(chat_id=self.__chat_id, text=text)
 
     def next_turn(self):
-        for telegram_id, white_cards in self.__cards_submitted_this_round:
+        for telegram_id, white_cards in self.__cards_submitted_this_round.items():
             self.__deck.discard_white_cards(white_cards)
 
         self.__deck.discard_black_card(self.__current_black_card)
@@ -192,7 +192,7 @@ class Game:
             self.send_message(self.__chat_id, "You can't play a white card on your turn!")
             return
 
-        if telegram_id in self.__cards_submitted_this_round:
+        if telegram_id in self.__cards_submitted_this_round.keys():
             self.send_message(self.__chat_id, "You have already played a white card this round!")
             return
 
