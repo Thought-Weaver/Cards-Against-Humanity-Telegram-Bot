@@ -263,6 +263,8 @@ def choose_handler(bot, update, chat_data, args):
     if game.choose(user_id, id):
         winner = game.check_for_win()
         if not winner:
+            for id in game.get_players().keys():
+                send_hand(bot, chat_id, game, id)
             game.next_turn()
         else:
             bot.send_message(chat_id=chat_id, text="%s has won!" % winner)

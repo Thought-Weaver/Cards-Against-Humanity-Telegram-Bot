@@ -159,6 +159,10 @@ class Game:
 
         self.__current_black_card = self.__deck.draw_black_card()
 
+        self.__cards_submitted_this_round = defaultdict(list)
+
+        self.__randomized_ids = []
+
         self.__turn = (self.__turn + 1) % len(self.__players)
 
         self.send_state()
