@@ -208,8 +208,8 @@ class Game:
             self.send_message(self.__chat_id, "You can't play a white card on your turn!")
             return
 
-        if telegram_id in self.__cards_submitted_this_round.keys():
-            self.send_message(self.__chat_id, "You have already played a white card this round!")
+        if len(self.__cards_submitted_this_round[telegram_id]) == self.__current_black_card[0]:
+            self.send_message(self.__chat_id, "You've already played all your white cards for this round!")
             return
 
         card = player.remove_card(card_id)
