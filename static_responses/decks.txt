@@ -1,5 +1,6 @@
 The following decks are available to play with:
 
 (0) Base Deck
+(1) Caltech Deck
 
 If no deck is specified, the only base deck will be used.

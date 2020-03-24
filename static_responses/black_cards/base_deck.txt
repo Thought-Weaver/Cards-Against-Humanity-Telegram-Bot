@@ -16,7 +16,7 @@
 1|What's my secret power?
 1|I'm going on a cleanse this weak. Nothing but kale juice and ______.
 1|Dear Abby, I'm having some trouble with ______ and would like your advice.
-1|M. Nigh Shyamalan's new movie is coming out! It's Avatar, The Last Airbender and ______.
+1|M. Night Shyamalan's new movie is coming out! It's Avatar, The Last Airbender and ______.
 1|When I am President, I will create the Department of ______.
 1|What are my parents hiding from me?
 1|What never fails to liven up the party?
