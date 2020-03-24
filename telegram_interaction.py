@@ -51,7 +51,8 @@ def send_hand(bot, chat_id, game, user_id):
     hand = game.get_players().get(user_id).get_formatted_hand()
 
     bot.send_message(chat_id=user_id,
-                     text=hand + "\n")
+                     text=hand + "\n",
+                     parse_mode = telegram.ParseMode.HTML)
 
 
 def send_hands(bot, chat_id, game, players):
@@ -395,6 +396,7 @@ if __name__ == "__main__":
     endgame_aliases = ["endgame"]
     add_deck_aliases = ["adddeck", "ad"]
     remove_deck_aliases = ["removedeck", "rd"]
+    blame_aliases = ["blame", "blam"]
 
     commands = [("feedback", 0, feedback_aliases),
                 ("newgame", 1, newgame_aliases),
@@ -406,7 +408,8 @@ if __name__ == "__main__":
                 ("play", 2, play_aliases),
                 ("choose", 2, choose_aliases),
                 ("add_deck", 2, add_deck_aliases),
-                ("remove_deck", 2, remove_deck_aliases)]
+                ("remove_deck", 2, remove_deck_aliases),
+                ("blame", 1, blame_aliases)]
     for c in commands:
         func = locals()[c[0] + "_handler"]
         if c[1] == 0:

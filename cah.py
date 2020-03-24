@@ -37,7 +37,7 @@ class Player:
         return None
 
     def get_formatted_hand(self):
-        text = "Your current hand:\n\n"
+        text = "<b>Your current hand:</b>\n\n"
         for i in range(len(self.__hand)):
             text += "(" + str(i) + ") " + str(self.__hand[i]) + "\n"
         return text
