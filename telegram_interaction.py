@@ -289,10 +289,10 @@ def blame_handler(bot, update, chat_data):
                 return
 
     for telegram_id, player in game.get_players().items():
+        text = ""
         if game.get_current_turn_player() != player and not game.player_submitted_correct_num_cards(telegram_id):
-            bot.send_message(chat_id=chat_id, text="[{}](tg://user?id={})".format(player.get_name(), telegram_id),
-                             parse_mode=telegram.ParseMode.MARKDOWN)
-            return
+            text += "[{}](tg://user?id={})\n".format(player.get_name(), telegram_id)
+        bot.send_message(chat_id=chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 
