@@ -19,7 +19,7 @@ with open("api_key.txt", 'r') as f:
 PORT = int(os.environ.get("PORT", "8443"))
 
 # Format is mmddyyyy
-PATCHNUMBER = "03212020"
+PATCHNUMBER = "03252020"
 
 MIN_PLAYERS = 3
 

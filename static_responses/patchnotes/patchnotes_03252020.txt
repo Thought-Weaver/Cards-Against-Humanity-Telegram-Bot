@@ -1,0 +1,11 @@
+Patch Notes (3/25/2020):
+
+New Features:
+
+-Added the Absurd Deck! See /decks for more.
+-/decks now shows the black/white card amounts.
+-Added support for multiple response black cards.
+
+Bug Fixes:
+
+-/blame now works properly.
