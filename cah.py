@@ -186,7 +186,7 @@ class Game:
         for id in self.__randomized_ids:
             key = list(self.__cards_submitted_this_round.keys())[id]
             white_cards = self.__cards_submitted_this_round[key]
-            text += "(%s) %s\n" % (count, ", ".join(white_cards))
+            text += "(%s) %s\n" % (count, "".join(white_cards))
             count += 1
         self.send_message(self.__chat_id, text)
 

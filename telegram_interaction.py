@@ -245,6 +245,7 @@ def play_handler(bot, update, chat_data, args):
         return
 
     game.play(user_id, card_id)
+    send_hand(bot, chat_id, game, user_id)
 
 
 def choose_handler(bot, update, chat_data, args):
@@ -264,8 +265,6 @@ def choose_handler(bot, update, chat_data, args):
     if game.choose(user_id, id):
         winner = game.check_for_win()
         if not winner:
-            for id in game.get_players().keys():
-                send_hand(bot, chat_id, game, id)
             game.next_turn()
         else:
             bot.send_message(chat_id=chat_id, text="%s has won!" % winner)
@@ -288,11 +287,11 @@ def blame_handler(bot, update, chat_data):
                                  parse_mode=telegram.ParseMode.MARKDOWN)
                 return
 
+    text = ""
     for telegram_id, player in game.get_players().items():
-        text = ""
         if game.get_current_turn_player() != player and not game.player_submitted_correct_num_cards(telegram_id):
             text += "[{}](tg://user?id={})\n".format(player.get_name(), telegram_id)
-        bot.send_message(chat_id=chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
+    bot.send_message(chat_id=chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN)
 
 
 
