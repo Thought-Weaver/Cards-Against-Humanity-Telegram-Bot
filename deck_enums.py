@@ -19,7 +19,7 @@ class DeckEnums(IntEnum):
     NINETIES_PACK = 14
 
 
-DECK_NAMES = {
+DECK_FILENAMES = {
     DeckEnums.BASE_DECK : "base_deck.txt",
     DeckEnums.CALTECH_DECK : "caltech_deck.txt",
     DeckEnums.ABSURD_DECK : "absurd_deck.txt",
@@ -35,4 +35,22 @@ DECK_NAMES = {
     DeckEnums.FOOD_PACK : "food_pack.txt",
     DeckEnums.INTERNET_PACK : "internet_pack.txt",
     DeckEnums.NINETIES_PACK : "90s_pack.txt"
+}
+
+DECK_NAMES = {
+    DeckEnums.BASE_DECK : "Base Deck",
+    DeckEnums.CALTECH_DECK : "Caltech Deck",
+    DeckEnums.ABSURD_DECK : "Absurd Deck",
+    DeckEnums.RED_BOX : "Red Box",
+    DeckEnums.BLUE_BOX : "Blue Box",
+    DeckEnums.GREEN_BOX : "Green Box",
+    DeckEnums.PAX_EAST_2013 : "PAX East 2013 Deck",
+    DeckEnums.PAX_EAST_2014 : "PAX East 2014 Deck",
+    DeckEnums.REJECT_PACK : "Reject Pack",
+    DeckEnums.SCIENCE_PACK : "Science Pack",
+    DeckEnums.FANTASY_PACK : "Fantasy Pack",
+    DeckEnums.SCIFI_PACK : "Sci-fi Pack",
+    DeckEnums.FOOD_PACK : "Food Pack",
+    DeckEnums.INTERNET_PACK : "Internet Pack",
+    DeckEnums.NINETIES_PACK : "90s Pack"
 }

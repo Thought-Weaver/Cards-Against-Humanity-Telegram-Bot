@@ -1,0 +1,6 @@
+Patch Notes (4/4/2020):
+
+New Features:
+
+-The Caltech deck has been expanded and improved!
+-You can now use /currentdecks (/cd) to see the decks being used in the current game.

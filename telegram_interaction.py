@@ -11,7 +11,7 @@ import os
 
 import cah
 
-from deck_enums import DeckEnums
+from deck_enums import DeckEnums, DECK_NAMES
 
 with open("api_key.txt", 'r') as f:
     TOKEN = f.read().rstrip()
@@ -362,6 +362,21 @@ def remove_deck_handler(bot, update, chat_data, args):
     bot.send_message(chat_id=chat_id, text="Removed deck %s!" % deck)
 
 
+def current_decks_handler(bot, update, chat_data):
+    chat_id = update.message.chat_id
+    game = chat_data.get("game_obj")
+
+    if not chat_data.get("is_game_pending", False) and game is None:
+        text = open("static_responses/current_decks_not_pending.txt", "r").read()
+        bot.send_message(chat_id=chat_id, text=text)
+        return
+
+    text = "Current Decks:\n\n"
+    for i in chat_data["decks"]:
+        text += "(%s) %s\n" % (i, DECK_NAMES[i])
+    bot.send_message(chat_id=chat_id, text=text)
+
+
 def handle_error(bot, update, error):
     try:
         raise error
@@ -396,6 +411,7 @@ if __name__ == "__main__":
     add_deck_aliases = ["adddeck", "ad"]
     remove_deck_aliases = ["removedeck", "rd"]
     blame_aliases = ["blame", "blam"]
+    current_decks_aliases = ["currentdecks", "cd"]
 
     commands = [("feedback", 0, feedback_aliases),
                 ("newgame", 1, newgame_aliases),
@@ -408,7 +424,8 @@ if __name__ == "__main__":
                 ("choose", 2, choose_aliases),
                 ("add_deck", 2, add_deck_aliases),
                 ("remove_deck", 2, remove_deck_aliases),
-                ("blame", 1, blame_aliases)]
+                ("blame", 1, blame_aliases),
+                ("current_decks", 1, current_decks_aliases)]
     for c in commands:
         func = locals()[c[0] + "_handler"]
         if c[1] == 0:

@@ -1,7 +1,7 @@
 The following decks are available to play with: (black cards/white cards)
 
 (0) Base Deck (71/500)
-(1) Caltech Deck (29/98)
+(1) Caltech Deck (38/118)
 (2) Absurd Deck (44/256)
 (3) Red Box (75/263)
 (4) Blue Box (81/220)

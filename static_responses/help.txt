@@ -12,3 +12,4 @@ Here's a list of helpful commands:
 /decks - Lists all decks you can play with!
 /adddeck - Adds the deck specified to the game.
 /removedeck - Removes the deck specified from the game.
+/currentdecks - Shows the current decks in play.
