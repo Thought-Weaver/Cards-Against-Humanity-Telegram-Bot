@@ -31,10 +31,13 @@ class Player:
     def get_score(self):
         return self.__score
 
-    def remove_card(self, id):
-        if 0 <= id < len(self.__hand):
-            return self.__hand.pop(id)
-        return None
+    def remove_cards(self, ids):
+        # Descending order to avoid issues.
+        ids_sorted = sorted(ids, reverse=True)
+        cards = [self.__hand[id] for id in ids]
+        for id in ids_sorted:
+            del self.__hand[id]
+        return cards
 
     def get_formatted_hand(self):
         text = "<b>Your current hand:</b>\n\n"
@@ -197,7 +200,7 @@ class Game:
         return len(self.__cards_submitted_this_round.keys()) == len(self.__players) - 1 and \
                 all(len(cards) == self.__current_black_card[0] for cards in self.__cards_submitted_this_round.values())
 
-    def play(self, telegram_id, card_id):
+    def play(self, telegram_id, card_ids):
         player = self.__players[telegram_id]
 
         if player is None:
@@ -212,9 +215,10 @@ class Game:
             self.send_message(self.__chat_id, "You've already played all your white cards for this round!")
             return
 
-        card = player.remove_card(card_id)
-        self.__cards_submitted_this_round[telegram_id].append(card)
-        self.send_message(telegram_id, "You submitted: %s" % card)
+        cards = player.remove_cards(card_ids)
+        self.__cards_submitted_this_round[telegram_id] += cards
+        for card in cards:
+            self.send_message(telegram_id, "You submitted: %s" % card)
 
         # Draw back to 10 cards.
         self.draw(player)

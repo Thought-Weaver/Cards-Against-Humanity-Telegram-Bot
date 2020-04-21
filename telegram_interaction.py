@@ -234,17 +234,17 @@ def play_handler(bot, update, chat_data, args):
     if not check_game_existence(bot, game, chat_id):
         return
 
-    if len(args) != 1:
-        bot.send_message(chat_id=chat_id, text="Usage: /play {card ID}")
+    if len(args) < 1:
+        bot.send_message(chat_id=chat_id, text="Usage: /play {card ID 1} {card ID 2} ...")
         return
 
-    card_id = int(args[0])
+    card_ids = [int(c) for c in args]
 
-    if card_id < 0 or card_id > game.get_deck().get_hand_size():
+    if any(card_id < 0 or card_id > game.get_deck().get_hand_size() for card_id in card_ids):
         bot.send_message(chat_id=chat_id, text="That's not a valid card ID.")
         return
 
-    game.play(user_id, card_id)
+    game.play(user_id, card_ids)
     send_hand(bot, chat_id, game, user_id)
 
 

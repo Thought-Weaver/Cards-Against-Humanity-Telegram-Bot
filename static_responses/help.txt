@@ -3,7 +3,7 @@ Here's a list of helpful commands:
 /join - Joins a pending game.
 /leave - Leaves a pending game.
 /listplayers - Lists everyone playing the game.
-/play - Inputs a white card.
+/play - Submit white card(s).
 /choose - Chooses a white card to win the round.
 /feedback - Inputs feedback for the bot.
 /newgame - Begins a pending game of Cards Against Humanity.

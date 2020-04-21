@@ -4,7 +4,7 @@ The person who first joined the game begins as the Card Czar and will play a bla
 
 Each player then submits white cards using /play {card_id} to fill in the blank(s) on the black card. Whenever you submit a card, a new card will be drawn!
 
-If you have to fill in two or more blanks, submit the cards one at a time. You'll draw a new card after each /play, so make sure to read your hand carefully!
+If you have to fill in two or more blanks, submit the cards one at a time. You'll draw a new card after each /play, so make sure to read your hand carefully if you submit one at a time! You can also submit multiple at once by doing /play {card ID 1} {card ID 2} ...
 
 Once all players have submitted their white cards, the Card Czar will choose the best white card submitted. That player will get one Awesome Point.
 
