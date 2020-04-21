@@ -308,29 +308,26 @@ def add_deck_handler(bot, update, chat_data, args):
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if len(args) != 1:
-        bot.send_message(chat_id=chat_id, text="Usage: /ad {deck ID from /decks}")
+    if len(args) < 1:
+        bot.send_message(chat_id=chat_id, text="Usage: /ad {deck IDs from /decks}")
         return
 
     try:
-        deck = int(args[0])
+        decks = [int(d) for d in args]
     except ValueError:
         bot.send_message(chat_id=chat_id, text="That is not a valid integer.")
         return
 
     max_deck = max(list(map(int, DeckEnums)))
-    if deck < 0 or deck > max_deck:
+    if any(deck < 0 or deck > max_deck for deck in decks):
         bot.send_message(chat_id=chat_id, text="That deck is not in the range [0, %s]!" % max_deck)
         return
 
     if chat_data.get("decks") is None:
-        chat_data["decks"] = [deck]
+        chat_data["decks"] = decks
     else:
-        if deck in chat_data["decks"]:
-            bot.send_message(chat_id=chat_id, text="That deck has already been added!")
-            return
-        chat_data["decks"].append(deck)
-    bot.send_message(chat_id=chat_id, text="Added deck %s!" % deck)
+        chat_data["decks"] = list(set(chat_data["decks"]).union(set(decks)))
+    bot.send_message(chat_id=chat_id, text="Added deck(s) %s!" % decks)
 
 
 def remove_deck_handler(bot, update, chat_data, args):

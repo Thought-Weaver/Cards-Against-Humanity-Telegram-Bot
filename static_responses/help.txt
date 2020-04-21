@@ -10,6 +10,6 @@ Here's a list of helpful commands:
 /startgame - Begins the pending game.
 /endgame - Ends the current game.
 /decks - Lists all decks you can play with!
-/adddeck - Adds the deck specified to the game.
+/adddeck - Adds the decks specified to the game.
 /removedeck - Removes the deck specified from the game.
 /currentdecks - Shows the current decks in play.
