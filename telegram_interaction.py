@@ -238,6 +238,11 @@ def play_handler(bot, update, chat_data, args):
         bot.send_message(chat_id=chat_id, text="Usage: /play {card ID 1} {card ID 2} ...")
         return
 
+    num_cards_to_submit = game.get_current_black_card()[0]
+    if len(args) > num_cards_to_submit:
+        bot.send_message(chat_id=chat_id, text="You submitted more cards that necessary (%s)!" % num_cards_to_submit)
+        return
+
     card_ids = [int(c) for c in args]
 
     if any(card_id < 0 or card_id > game.get_deck().get_hand_size() for card_id in card_ids):

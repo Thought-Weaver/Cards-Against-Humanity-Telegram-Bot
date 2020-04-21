@@ -142,6 +142,9 @@ class Game:
     def get_deck(self):
         return self.__deck
 
+    def get_current_black_card(self):
+        return self.__current_black_card
+
     def get_current_turn_player(self):
         return self.__players[list(self.__players.keys())[self.__turn]]
 
