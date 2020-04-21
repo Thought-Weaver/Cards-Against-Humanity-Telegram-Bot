@@ -124,6 +124,7 @@ class Game:
         # Whoever gets to 7 black cards won first wins!
         self.__WIN_NUM = 7
 
+        random.shuffle(players)
         for user_id, name in players.items():
             self.__players[user_id] = Player(name, self.__deck.draw_hand())
             self.send_message(self.__chat_id, "%s has been added to the game.\n" % name)
