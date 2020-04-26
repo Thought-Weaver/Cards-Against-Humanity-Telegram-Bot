@@ -390,7 +390,7 @@ if __name__ == "__main__":
     # Set up the bot
 
     bot = telegram.Bot(token=TOKEN)
-    updater = Updater(token=TOKEN)
+    updater = Updater(token=TOKEN, request_kwargs={'read_timeout': 60, 'connect_timeout': 60})
     dispatcher = updater.dispatcher
 
     # Static command handlers
