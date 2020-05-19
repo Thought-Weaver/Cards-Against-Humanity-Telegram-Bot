@@ -16,5 +16,6 @@ The following decks are available to play with: (black cards/white cards)
 (13) Internet Pack (9/21)
 (14) 90s Pack (8/23)
 (15) People in Chat Deck (0/12)
+(16) Logan Pack (0/30)
 
 If no deck is specified, only the base deck will be used.

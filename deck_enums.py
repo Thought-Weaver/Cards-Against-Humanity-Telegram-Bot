@@ -18,6 +18,7 @@ class DeckEnums(IntEnum):
     INTERNET_PACK = 13
     NINETIES_PACK = 14
     PEOPLE_IN_CHAT_DECK = 15
+    LOGAN_PACK = 16
 
 
 DECK_FILENAMES = {
@@ -36,7 +37,8 @@ DECK_FILENAMES = {
     DeckEnums.FOOD_PACK : "food_pack.txt",
     DeckEnums.INTERNET_PACK : "internet_pack.txt",
     DeckEnums.NINETIES_PACK : "90s_pack.txt",
-    DeckEnums.PEOPLE_IN_CHAT_DECK : "people_in_chat_deck.txt"
+    DeckEnums.PEOPLE_IN_CHAT_DECK : "people_in_chat_deck.txt",
+    DeckEnums.LOGAN_PACK: "logan_pack.txt"
 }
 
 DECK_NAMES = {
@@ -55,5 +57,6 @@ DECK_NAMES = {
     DeckEnums.FOOD_PACK : "Food Pack",
     DeckEnums.INTERNET_PACK : "Internet Pack",
     DeckEnums.NINETIES_PACK : "90s Pack",
-    DeckEnums.PEOPLE_IN_CHAT_DECK : "People in Chat Deck"
+    DeckEnums.PEOPLE_IN_CHAT_DECK : "People in Chat Deck",
+    DeckEnums.LOGAN_PACK : "Logan Pack"
 }
