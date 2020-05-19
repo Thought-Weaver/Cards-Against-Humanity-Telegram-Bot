@@ -66,8 +66,7 @@
 1|Come to Dubai, where you can relax in our world-famous spas, experience the nightlife, or simply enjoy ______ by the poolside.
 1|"This is madness!" "No. THIS IS ______!"
 1|Listen, Gary, I like you. But if you want that corner office, you're going to have to show me ______.
-1|I went to the desert and ate of the peyote cactus.
-1|Turns out my spirit animal is ______.
+1|I went to the desert and ate of the peyote cactus. Turns out my spirit animal is ______.
 1|And would you like those buffalo wings mild, hot, or ______?
 1|The six things I could never do without: oxygen, facebook, chocolate, Netflix, friends, and ______ LOL!
 1|Why won't you make love to me anymore? Is it ______?

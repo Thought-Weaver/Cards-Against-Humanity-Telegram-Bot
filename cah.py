@@ -92,6 +92,9 @@ class Deck:
     def draw_black_card(self):
         if len(self.__black_cards) <= 0:
             self.reshuffle()
+        # If, after reshuffling, it's still empty, add a special card.
+        if len(self.__black_cards) <= 0:
+            self.__black_cards.append((1, "The void is a lonely place to live. What do you shout into the abyss?"))
         return self.__black_cards.pop()
 
     def draw_hand(self):
