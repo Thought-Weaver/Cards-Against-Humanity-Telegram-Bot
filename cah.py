@@ -42,7 +42,7 @@ class Player:
     def get_formatted_hand(self):
         text = "<b>Your current hand:</b>\n\n"
         for i in range(len(self.__hand)):
-            text += "(" + str(i) + ") " + str(self.__hand[i]) + "\n"
+            text += "(" + str(i) + ") " + str(self.__hand[i]) + "\n\n"
         return text
 
     def add_card(self, c):
@@ -66,8 +66,8 @@ class Deck:
         self.__black_cards_played = []
         self.__HAND_SIZE = 10
         for d in decks_to_use:
-            self.__white_cards += open("./static_responses/white_cards/%s" % DECK_FILENAMES[d]).readlines()
-            bcs = open("./static_responses/black_cards/%s" % DECK_FILENAMES[d]).readlines()
+            self.__white_cards += open("./static_responses/white_cards/%s" % DECK_FILENAMES[d]).read().splitlines()
+            bcs = open("./static_responses/black_cards/%s" % DECK_FILENAMES[d]).read().splitlines()
             for bc in bcs:
                 bc_split = bc.split("|")
                 # Black cards are tuples of (num cards to submit, text).
@@ -77,12 +77,14 @@ class Deck:
 
     def reshuffle(self):
         if len(self.__white_cards) <= 0 < len(self.__white_cards_played):
-            self.__white_cards = random.shuffle(self.__white_cards_played[:-1])
-            self.__white_cards_played = self.__white_cards_played[-1]
+            random.shuffle(self.__white_cards_played)
+            self.__white_cards += self.__white_cards_played
+            self.__white_cards_played.clear()
 
         if len(self.__black_cards) <= 0 < len(self.__black_cards_played):
-            self.__black_cards = random.shuffle(self.__black_cards_played[:-1])
-            self.__black_cards_played = self.__black_cards_played[-1]
+            random.shuffle(self.__black_cards_played)
+            self.__black_cards += self.__black_cards_played
+            self.__black_cards_played.clear()
 
     def draw_white_card(self):
         if len(self.__white_cards) <= 0:
@@ -190,14 +192,14 @@ class Game:
         return False
 
     def send_white_card_options(self):
-        text = "<b>Current Black Card:</b>\n\n%s\n" % self.__current_black_card[1]
+        text = "<b>Current Black Card:</b>\n\n%s\n\n" % self.__current_black_card[1]
         text += "<b>White Cards Submitted:</b>\n\n"
 
         count = 0
         for id in self.__randomized_ids:
             key = list(self.__cards_submitted_this_round.keys())[id]
             white_cards = self.__cards_submitted_this_round[key]
-            text += "(%s) %s\n" % (count, "".join(white_cards))
+            text += "(%s) %s\n\n" % (count, "".join(white_cards))
             count += 1
         self.send_message(self.__chat_id, text)
 
