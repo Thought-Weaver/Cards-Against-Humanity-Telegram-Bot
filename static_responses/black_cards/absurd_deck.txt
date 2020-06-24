@@ -18,7 +18,7 @@
 1|Why did the chicken cross the road?
 1|Say it loud! I'm ______ and I'm proud.
 1|Oh you haaaaave to see this new documentary on Netflix. I don't want to give anything away, but let's just say it'll change the way you look at ______.
-1|Ladies and gentleman, I propose a two-pronged plan: The first prong will be ______ and the second prong will be ______.
+2|Ladies and gentleman, I propose a two-pronged plan: The first prong will be ______ and the second prong will be ______.
 1|I have solved politics. My solution is ______.
 1|In Radiohead's new single, Thom Yorke repeats the phrase "______" dozens of times over a skittering drum beat.
 1|Here it comes! Ohhhh god! It's ______!
