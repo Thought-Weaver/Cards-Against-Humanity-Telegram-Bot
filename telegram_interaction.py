@@ -8,12 +8,16 @@ from telegram.error import TelegramError, Unauthorized
 import logging
 
 import os
+import sys
+import traceback
+import logging
+import inspect
 
 import cah
 
 from deck_enums import DeckEnums, DECK_NAMES
 
-with open("api_key.txt", 'r') as f:
+with open("api_key.txt", 'r', encoding="utf-8") as f:
     TOKEN = f.read().rstrip()
 
 PORT = int(os.environ.get("PORT", "8443"))
@@ -23,31 +27,46 @@ PATCHNUMBER = "03252020"
 
 MIN_PLAYERS = 3
 
+def setup_logger(name, log_file, level=logging.INFO):
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+ERROR_LOGGER = setup_logger("error_logger", "error_logs.log")
+INFO_LOGGER = setup_logger("info_logger", "info_logs.log")
+
+bot = telegram.Bot(token=TOKEN)
 
 def static_handler(command):
-    text = open("static_responses/{}.txt".format(command), "r").read()
+    text = open("static_responses/{}.txt".format(command), "r", encoding="utf-8").read()
 
     return CommandHandler(command,
-        lambda bot, update: bot.send_message(chat_id=update.message.chat.id, text=text))
+        lambda update, context: bot.send_message(chat_id=update.message.chat.id, text=text))
 
 
-def reset_chat_data(chat_data):
-    chat_data["is_game_pending"] = False
-    chat_data["pending_players"] = {}
-    chat_data["game_obj"] = None
-    chat_data["decks"] = []
+def reset_chat_data(context):
+    context.bot_data["is_game_pending"] = False
+    context.bot_data["pending_players"] = {}
+    context.bot_data["game_obj"] = None
+    context.bot_data["decks"] = []
 
 
-def check_game_existence(bot, game, chat_id):
+def check_game_existence(game, chat_id):
     if game is None:
-        text = open("static_responses/game_dne_failure.txt", "r").read()
+        text = open("static_responses/game_dne_failure.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return False
 
     return True
 
 
-def send_hand(bot, chat_id, game, user_id):
+def send_hand(chat_id, game, user_id):
     hand = game.get_players().get(user_id).get_formatted_hand()
 
     bot.send_message(chat_id=user_id,
@@ -55,127 +74,127 @@ def send_hand(bot, chat_id, game, user_id):
                      parse_mode = telegram.ParseMode.HTML)
 
 
-def send_hands(bot, chat_id, game, players):
+def send_hands(chat_id, game, players):
     for user_id, nickname in players.items():
-        send_hand(bot, chat_id, game, user_id)
+        send_hand(chat_id, game, user_id)
 
 
-def newgame_handler(bot, update, chat_data):
-    game = chat_data.get("game_obj")
+def newgame_handler(update, context):
+    game = context.bot_data.get("game_obj")
     chat_id = update.message.chat.id
 
-    if game is None and not chat_data.get("is_game_pending", False):
-        reset_chat_data(chat_data)
-        chat_data["is_game_pending"] = True
-        text = open("static_responses/new_game.txt", "r").read()
+    if game is None and not context.bot_data.get("is_game_pending", False):
+        reset_chat_data(context)
+        context.bot_data["is_game_pending"] = True
+        text = open("static_responses/new_game.txt", "r", encoding="utf-8").read()
     elif game is not None:
-        text = open("static_responses/game_ongoing.txt", "r").read()
-    elif chat_data.get("is_game_pending", False):
-        text = open("static_responses/game_pending.txt", "r").read()
+        text = open("static_responses/game_ongoing.txt", "r", encoding="utf-8").read()
+    elif context.bot_data.get("is_game_pending", False):
+        text = open("static_responses/game_pending.txt", "r", encoding="utf-8").read()
     else:
         text = "Something has gone horribly wrong!"
 
     bot.send_message(chat_id=chat_id, text=text)
 
 
-def is_nickname_valid(name, user_id, chat_data):
-    if user_id in chat_data.get("pending_players", {}):
-        if name.lower() == chat_data["pending_players"][user_id].lower():
+def is_nickname_valid(name, user_id, context):
+    if user_id in context.bot_data.get("pending_players", {}):
+        if name.lower() == context.bot_data["pending_players"][user_id].lower():
             return True
 
-    for id, user_name in chat_data.get("pending_players", {}).items():
+    for id, user_name in context.bot_data.get("pending_players", {}).items():
         if name.lower() == user_name.lower():
             return False
 
     return True
 
 
-def join_handler(bot, update, chat_data, args):
+def join_handler(update, context):
     chat_id = update.message.chat.id
     user_id = update.message.from_user.id
 
-    if not chat_data.get("is_game_pending", False):
-        text = open("static_responses/join_game_not_pending.txt", "r").read()
+    if not context.bot_data.get("is_game_pending", False):
+        text = open("static_responses/join_game_not_pending.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if args:
-        nickname = " ".join(args)
+    if context.args:
+        nickname = " ".join(context.args)
     else:
         nickname = update.message.from_user.first_name
 
-    if is_nickname_valid(nickname, user_id, chat_data):
-        chat_data["pending_players"][user_id] = nickname
+    if is_nickname_valid(nickname, user_id, context):
+        context.bot_data["pending_players"][user_id] = nickname
         bot.send_message(chat_id=update.message.chat_id,
                          text="Joined with nickname %s!" % nickname)
         bot.send_message(chat_id=update.message.chat_id,
-                         text="Current player count: %d" % len(chat_data.get("pending_players", {})))
+                         text="Current player count: %d" % len(context.bot_data.get("pending_players", {})))
     else:
-        text = open("static_responses/invalid_nickname.txt", "r").read()
+        text = open("static_responses/invalid_nickname.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
 
 
-def leave_handler(bot, update, chat_data):
+def leave_handler(update, context):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
 
-    if not chat_data.get("is_game_pending", False):
-        text = open("static_responses/leave_game_not_pending_failure.txt", "r").read()
-    elif user_id not in chat_data.get("pending_players", {}):
-        text = open("static_responses/leave_id_missing_failure.txt", "r").read()
+    if not context.bot_data.get("is_game_pending", False):
+        text = open("static_responses/leave_game_not_pending_failure.txt", "r", encoding="utf-8").read()
+    elif user_id not in context.bot_data.get("pending_players", {}):
+        text = open("static_responses/leave_id_missing_failure.txt", "r", encoding="utf-8").read()
     else:
         text = "You have left the current game."
-        del chat_data["pending_players"][update.message.from_user.id]
+        del context.bot_data["pending_players"][update.message.from_user.id]
 
     bot.send_message(chat_id=chat_id, text=text)
 
 
-def listplayers_handler(bot, update, chat_data):
+def listplayers_handler(update, context):
     chat_id = update.message.chat_id
     text = "List of players: \n"
-    game = chat_data.get("game_obj")
+    game = context.bot_data.get("game_obj")
 
-    if chat_data.get("is_game_pending", False):
-        for user_id, name in chat_data.get("pending_players", {}).items():
+    if context.bot_data.get("is_game_pending", False):
+        for user_id, name in context.bot_data.get("pending_players", {}).items():
             text += "%s\n" % name
     elif game is not None:
         for player in game.get_players().values():
             text += "%s\n" % player.get_name()
     else:
-        text = open("static_responses/listplayers_failure.txt", "r").read()
+        text = open("static_responses/listplayers_failure.txt", "r", encoding="utf-8").read()
 
     bot.send_message(chat_id=chat_id, text=text)
 
 
-def feedback_handler(bot, update, args):
-    if args and len(args) > 0:
-        feedback = open("feedback.txt\n", "a+")
+def feedback_handler(update, context):
+    if context.args and len(context.args) > 0:
+        feedback = open("feedback.txt\n", "a+", encoding="utf-8")
         feedback.write(update.message.from_user.first_name + "\n")
         feedback.write(str(update.message.from_user.id) + "\n")
-        feedback.write(" ".join(args) + "\n")
+        feedback.write(" ".join(context.args) + "\n")
         feedback.close()
         bot.send_message(chat_id=update.message.chat_id, text="Thanks for the feedback!")
     else:
         bot.send_message(chat_id=update.message.chat_id, text="Usage: /feedback [feedback]")
 
 
-def startgame_handler(bot, update, chat_data):
+def startgame_handler(update, context):
     chat_id = update.message.chat_id
     user_id = update.message.from_user.id
-    pending_players = chat_data.get("pending_players", {})
+    pending_players = context.bot_data.get("pending_players", {})
 
-    if not chat_data.get("is_game_pending", False):
-        text = open("static_responses/start_game_not_pending.txt", "r").read()
+    if not context.bot_data.get("is_game_pending", False):
+        text = open("static_responses/start_game_not_pending.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if user_id not in chat_data.get("pending_players", {}).keys():
-        text = open("static_responses/start_game_id_missing_failure.txt", "r").read()
+    if user_id not in context.bot_data.get("pending_players", {}).keys():
+        text = open("static_responses/start_game_id_missing_failure.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
     if len(pending_players) < MIN_PLAYERS:
-        text = open("static_responses/start_game_min_threshold.txt", "r").read()
+        text = open("static_responses/start_game_min_threshold.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
@@ -183,89 +202,89 @@ def startgame_handler(bot, update, chat_data):
         for user_id, nickname in pending_players.items():
             bot.send_message(chat_id=user_id, text="Trying to start game!")
     except Unauthorized as u:
-        text = open("static_responses/start_game_failure.txt", "r").read()
+        text = open("static_responses/start_game_failure.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    text = open("static_responses/start_game.txt", "r").read()
+    text = open("static_responses/start_game.txt", "r", encoding="utf-8").read()
     bot.send_message(chat_id=chat_id, text=text)
 
     chat_id = update.message.chat_id
-    pending_players = chat_data.get("pending_players", {})
-    chat_data["is_game_pending"] = False
-    decks = [0] if len(chat_data["decks"]) == 0 else chat_data["decks"]
-    chat_data["game_obj"] = cah.Game(chat_id, pending_players, decks)
-    game = chat_data["game_obj"]
+    pending_players = context.bot_data.get("pending_players", {})
+    context.bot_data["is_game_pending"] = False
+    decks = [0] if len(context.bot_data["decks"]) == 0 else context.bot_data["decks"]
+    context.bot_data["game_obj"] = cah.Game(chat_id, pending_players, decks)
+    game = context.bot_data["game_obj"]
 
-    send_hands(bot, chat_id, game, pending_players)
+    send_hands(chat_id, game, pending_players)
 
 
-def endgame_handler(bot, update, chat_data):
+def endgame_handler(update, context):
     chat_id = update.message.chat.id
     user_id = update.message.from_user.id
-    game = chat_data.get("game_obj")
+    game = context.bot_data.get("game_obj")
 
-    if chat_data.get("is_game_pending", False):
-        chat_data["is_game_pending"] = False
-        text = open("static_responses/end_game.txt", "r").read()
+    if context.bot_data.get("is_game_pending", False):
+        context.bot_data["is_game_pending"] = False
+        text = open("static_responses/end_game.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
     if game is None:
-        text = open("static_responses/game_dne_failure.txt", "r").read()
+        text = open("static_responses/game_dne_failure.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
     if user_id not in game.get_players():
-        text = open("static_responses/end_game_id_missing_failure.txt", "r").read()
+        text = open("static_responses/end_game_id_missing_failure.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    reset_chat_data(chat_data)
-    text = open("static_responses/end_game.txt", "r").read()
+    reset_chat_data(context)
+    text = open("static_responses/end_game.txt", "r", encoding="utf-8").read()
     bot.send_message(chat_id=chat_id, text=text)
 
 
-def play_handler(bot, update, chat_data, args):
+def play_handler(update, context):
     chat_id = update.message.chat.id
     user_id = update.message.from_user.id
-    game = chat_data.get("game_obj")
+    game = context.bot_data.get("game_obj")
 
-    if not check_game_existence(bot, game, chat_id):
+    if not check_game_existence(game, chat_id):
         return
 
-    if len(args) < 1:
+    if len(context.args) < 1:
         bot.send_message(chat_id=chat_id, text="Usage: /play {card ID 1} {card ID 2} ...")
         return
 
     num_cards_to_submit = game.get_current_black_card()[0]
-    if len(args) > num_cards_to_submit:
+    if len(context.args) > num_cards_to_submit:
         bot.send_message(chat_id=chat_id, text="You submitted more cards that necessary (%s)!" % num_cards_to_submit)
         return
 
-    card_ids = [int(c) for c in args]
+    card_ids = [int(c) for c in context.args]
 
     if any(card_id < 0 or card_id > game.get_deck().get_hand_size() for card_id in card_ids):
         bot.send_message(chat_id=chat_id, text="That's not a valid card ID.")
         return
 
     game.play(user_id, card_ids)
-    send_hand(bot, chat_id, game, user_id)
+    send_hand(chat_id, game, user_id)
 
 
-def choose_handler(bot, update, chat_data, args):
+def choose_handler(update, context):
     chat_id = update.message.chat.id
     user_id = update.message.from_user.id
-    game = chat_data.get("game_obj")
+    game = context.bot_data.get("game_obj")
 
-    if not check_game_existence(bot, game, chat_id):
+    if not check_game_existence(game, chat_id):
         return
 
-    if len(args) != 1:
+    if len(context.args) != 1:
         bot.send_message(chat_id=chat_id, text="Usage: /choose {ID}")
         return
 
-    id = int(args[0])
+    id = int(context.args[0])
 
     if game.choose(user_id, id):
         winner = game.check_for_win()
@@ -273,15 +292,15 @@ def choose_handler(bot, update, chat_data, args):
             game.next_turn()
         else:
             bot.send_message(chat_id=chat_id, text="%s has won!" % winner)
-            endgame_handler(bot, update, chat_data)
+            endgame_handler(update, context)
 
 
-def blame_handler(bot, update, chat_data):
+def blame_handler(update, context):
     chat_id = update.message.chat_id
-    game = chat_data.get("game_obj")
+    game = context.bot_data.get("game_obj")
 
     if game is None:
-        text = open("static_responses/game_dne_failure.txt", "r").read()
+        text = open("static_responses/game_dne_failure.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
@@ -300,20 +319,20 @@ def blame_handler(bot, update, chat_data):
 
 
 
-def add_deck_handler(bot, update, chat_data, args):
+def add_deck_handler(update, context):
     chat_id = update.message.chat_id
 
-    if not chat_data.get("is_game_pending", False):
-        text = open("static_responses/add_deck_not_pending.txt", "r").read()
+    if not context.bot_data.get("is_game_pending", False):
+        text = open("static_responses/add_deck_not_pending.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if len(args) < 1:
+    if len(context.args) < 1:
         bot.send_message(chat_id=chat_id, text="Usage: /ad {deck IDs from /decks}")
         return
 
     try:
-        decks = [int(d) for d in args]
+        decks = [int(d) for d in context.args]
     except ValueError:
         bot.send_message(chat_id=chat_id, text="That is not a valid integer.")
         return
@@ -323,27 +342,27 @@ def add_deck_handler(bot, update, chat_data, args):
         bot.send_message(chat_id=chat_id, text="That deck is not in the range [0, %s]!" % max_deck)
         return
 
-    if chat_data.get("decks") is None:
-        chat_data["decks"] = decks
+    if context.bot_data.get("decks") is None:
+        context.bot_data["decks"] = decks
     else:
-        chat_data["decks"] = list(set(chat_data["decks"]).union(set(decks)))
+        context.bot_data["decks"] = list(set(context.bot_data["decks"]).union(set(decks)))
     bot.send_message(chat_id=chat_id, text="Added deck(s) %s!" % decks)
 
 
-def remove_deck_handler(bot, update, chat_data, args):
+def remove_deck_handler(update, context):
     chat_id = update.message.chat_id
 
-    if not chat_data.get("is_game_pending", False):
-        text = open("static_responses/remove_deck_not_pending.txt", "r").read()
+    if not context.bot_data.get("is_game_pending", False):
+        text = open("static_responses/remove_deck_not_pending.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
-    if len(args) != 1:
+    if len(context.args) != 1:
         bot.send_message(chat_id=chat_id, text="Usage: /rd {deck ID from /decks}")
         return
 
     try:
-        deck = int(args[0])
+        deck = int(context.args[0])
     except ValueError:
         bot.send_message(chat_id=chat_id, text="That is not a valid integer.")
         return
@@ -353,44 +372,47 @@ def remove_deck_handler(bot, update, chat_data, args):
         bot.send_message(chat_id=chat_id, text="That deck is not in the range [0, %s]!" % max_deck)
         return
 
-    if chat_data.get("decks") is None:
+    if context.bot_data.get("decks") is None:
         bot.send_message(chat_id=chat_id, text="No decks have been added yet! You can't remove one.")
         return
     else:
-        if deck not in chat_data["decks"]:
+        if deck not in context.bot_data["decks"]:
             bot.send_message(chat_id=chat_id, text="That deck has not been added!")
             return
-        chat_data["decks"].remove(deck)
+        context.bot_data["decks"].remove(deck)
     bot.send_message(chat_id=chat_id, text="Removed deck %s!" % deck)
 
 
-def current_decks_handler(bot, update, chat_data):
+def current_decks_handler(update, context):
     chat_id = update.message.chat_id
-    game = chat_data.get("game_obj")
+    game = context.bot_data.get("game_obj")
 
-    if not chat_data.get("is_game_pending", False) and game is None:
-        text = open("static_responses/current_decks_not_pending.txt", "r").read()
+    if not context.bot_data.get("is_game_pending", False) and game is None:
+        text = open("static_responses/current_decks_not_pending.txt", "r", encoding="utf-8").read()
         bot.send_message(chat_id=chat_id, text=text)
         return
 
     text = "Current Decks:\n\n"
-    for i in chat_data["decks"]:
+    for i in context.bot_data["decks"]:
         text += "(%s) %s\n" % (i, DECK_NAMES[i])
     bot.send_message(chat_id=chat_id, text=text)
 
 
-def handle_error(bot, update, error):
-    try:
-        raise error
-    except TelegramError:
-        logging.getLogger(__name__).warning('Telegram Error! %s caused by this update: %s', error, update)
+def log_action(update, func_name):
+    chat_id = update.message.chat.id
+    user_id = update.message.from_user.id
+
+    INFO_LOGGER.info("%s called %s in %s.", user_id, func_name, chat_id)
+
+
+def handle_error(update, context):
+    trace = "".join(traceback.format_tb(sys.exc_info()[2]))
+    ERROR_LOGGER.warning("Telegram Error! %s with context error %s caused by this update: %s", trace, context.error, update)
 
 
 if __name__ == "__main__":
     # Set up the bot
-
-    bot = telegram.Bot(token=TOKEN)
-    updater = Updater(token=TOKEN, request_kwargs={'read_timeout': 60, 'connect_timeout': 60})
+    updater = Updater(token=TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
     # Static command handlers
@@ -415,37 +437,26 @@ if __name__ == "__main__":
     blame_aliases = ["blame", "blam"]
     current_decks_aliases = ["currentdecks", "cd"]
 
-    commands = [("feedback", 0, feedback_aliases),
-                ("newgame", 1, newgame_aliases),
-                ("join", 2, join_aliases),
-                ("leave", 1, leave_aliases),
-                ("listplayers", 1, listplayers_aliases),
-                ("startgame", 1, startgame_aliases),
-                ("endgame", 1, endgame_aliases),
-                ("play", 2, play_aliases),
-                ("choose", 2, choose_aliases),
-                ("add_deck", 2, add_deck_aliases),
-                ("remove_deck", 2, remove_deck_aliases),
-                ("blame", 1, blame_aliases),
-                ("current_decks", 1, current_decks_aliases)]
-    for c in commands:
-        func = locals()[c[0] + "_handler"]
-        if c[1] == 0:
-            dispatcher.add_handler(CommandHandler(c[2], func, pass_args=True))
-        elif c[1] == 1:
-            dispatcher.add_handler(CommandHandler(c[2], func, pass_chat_data=True))
-        elif c[1] == 2:
-            dispatcher.add_handler(CommandHandler(c[2], func, pass_chat_data=True, pass_args=True))
-        elif c[1] == 3:
-            dispatcher.add_handler(CommandHandler(c[2], func, pass_chat_data=True, pass_user_data=True))
-
+    commands = [("feedback", feedback_aliases),
+                ("newgame", newgame_aliases),
+                ("join", join_aliases),
+                ("leave", leave_aliases),
+                ("listplayers", listplayers_aliases),
+                ("startgame", startgame_aliases),
+                ("endgame", endgame_aliases),
+                ("play", play_aliases),
+                ("choose", choose_aliases),
+                ("add_deck", add_deck_aliases),
+                ("remove_deck", remove_deck_aliases),
+                ("blame", blame_aliases),
+                ("current_decks", current_decks_aliases)]
+    for base_name, aliases in commands:
+        func = locals()[base_name + "_handler"]
+        dispatcher.add_handler(CommandHandler(aliases, func))
+    
     # Error handlers
 
     dispatcher.add_error_handler(handle_error)
-
-    logging.basicConfig(
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO, filename='logging.txt', filemode='a')
 
     updater.start_polling()
     updater.idle()

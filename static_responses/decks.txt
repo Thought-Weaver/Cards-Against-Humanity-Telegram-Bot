@@ -16,6 +16,12 @@ The following decks are available to play with: (black cards/white cards)
 (13) Internet Pack (9/21)
 (14) 90s Pack (8/23)
 (15) People in Chat Deck (0/12)
-(16) Logan Pack (0/42)
+(16) Creativity Pack (30/90)
+(17) Bay Area Pack (35/105)
+(18) College Pack (6/24)
+(19) Adulting Deck (100/350)
+(20) Conspiracy Deck (70/468)
+(21) Depravity Deck (99/432)
+(22) Against Sanity Pack (25/96)
 
 If no deck is specified, only the base deck will be used.

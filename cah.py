@@ -10,7 +10,7 @@ import random
 
 from deck_enums import DECK_FILENAMES
 
-with open("api_key.txt", 'r') as f:
+with open("api_key.txt", 'r', encoding="utf-8") as f:
     TOKEN = f.read().rstrip()
 
 bot = telegram.Bot(token=TOKEN)
@@ -66,8 +66,8 @@ class Deck:
         self.__black_cards_played = []
         self.__HAND_SIZE = 10
         for d in decks_to_use:
-            self.__white_cards += open("./static_responses/white_cards/%s" % DECK_FILENAMES[d]).read().splitlines()
-            bcs = open("./static_responses/black_cards/%s" % DECK_FILENAMES[d]).read().splitlines()
+            self.__white_cards += open("./static_responses/white_cards/%s" % DECK_FILENAMES[d], encoding="utf-8").read().splitlines()
+            bcs = open("./static_responses/black_cards/%s" % DECK_FILENAMES[d], encoding="utf-8").read().splitlines()
             for bc in bcs:
                 bc_split = bc.split("|")
                 # Black cards are tuples of (num cards to submit, text).

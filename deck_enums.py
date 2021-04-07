@@ -18,7 +18,13 @@ class DeckEnums(IntEnum):
     INTERNET_PACK = 13
     NINETIES_PACK = 14
     PEOPLE_IN_CHAT_DECK = 15
-    LOGAN_PACK = 16
+    AGAINST_CREATIVITY_PACK = 16
+    BAY_AREA_PACK = 17
+    COLLEGE_PACK = 18
+    ADULTING_DECK = 19
+    CONSPIRACY_DECK = 20
+    DEPRAVITY_DECK = 21
+    AGAINST_SANITY_DECK = 22
 
 
 DECK_FILENAMES = {
@@ -38,7 +44,13 @@ DECK_FILENAMES = {
     DeckEnums.INTERNET_PACK : "internet_pack.txt",
     DeckEnums.NINETIES_PACK : "90s_pack.txt",
     DeckEnums.PEOPLE_IN_CHAT_DECK : "people_in_chat_deck.txt",
-    DeckEnums.LOGAN_PACK: "logan_pack.txt"
+    DeckEnums.AGAINST_CREATIVITY_PACK : "against_creativity_pack.txt",
+    DeckEnums.BAY_AREA_PACK : "bay_area_pack.txt",
+    DeckEnums.COLLEGE_PACK : "college_pack.txt",
+    DeckEnums.ADULTING_DECK : "adulting_deck.txt",
+    DeckEnums.CONSPIRACY_DECK : "conspiracy_deck.txt",
+    DeckEnums.DEPRAVITY_DECK : "depravity_deck.txt",
+    DeckEnums.AGAINST_SANITY_DECK : "against_sanity.txt"
 }
 
 DECK_NAMES = {
@@ -58,5 +70,11 @@ DECK_NAMES = {
     DeckEnums.INTERNET_PACK : "Internet Pack",
     DeckEnums.NINETIES_PACK : "90s Pack",
     DeckEnums.PEOPLE_IN_CHAT_DECK : "People in Chat Deck",
-    DeckEnums.LOGAN_PACK : "Logan Pack"
+    DeckEnums.AGAINST_CREATIVITY_PACK : "Against Creativity Pack",
+    DeckEnums.BAY_AREA_PACK : "Bay Area Pack",
+    DeckEnums.COLLEGE_PACK : "College Pack",
+    DeckEnums.ADULTING_DECK : "Adulting Deck",
+    DeckEnums.CONSPIRACY_DECK : "Conspiracy Deck",
+    DeckEnums.DEPRAVITY_DECK : "Depravity Deck",
+    DeckEnums.AGAINST_SANITY_DECK : "Against Sanity Pack"
 }
